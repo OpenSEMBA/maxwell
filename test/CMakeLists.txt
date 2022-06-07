@@ -6,6 +6,9 @@ include_directories(${GTEST_INCLUDE_DIRS})
 find_package(mfem CONFIG REQUIRED)
 include_directories(${MFEM_INCLUDE_DIRS})
 
+find_package(Boost 1.78.0 REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
+
 include_directories(${maxwell_solvers_INCLUDE_DIRS})
 
 add_executable(maxwell_tests 
@@ -14,6 +17,6 @@ add_executable(maxwell_tests
 "maxwell/TestBilinearIntegrators.cpp" 
 "maxwell/TestMaterial.cpp" "maxwell/TestProbes.cpp" "maxwell/TestSources.cpp")
 
-target_link_libraries(maxwell_tests maxwell_solvers GTest::gtest GTest::gtest_main) 
+target_link_libraries(maxwell_tests maxwell_solvers GTest::gtest GTest::gtest_main Boost::boost) 
 
 

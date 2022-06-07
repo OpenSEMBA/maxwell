@@ -54,7 +54,7 @@ namespace HelperFunctions {
 				throw std::exception("Declared element index bigger than Mesh Number of Elements.");
 			}
 			for (int i = elemID[0]; i <= elemID[1]; i++) {
-				mesh.SetAttribute(i, kv.first);
+				mesh.SetAttribute(i, (int) kv.first);
 			}
 		}
 	}

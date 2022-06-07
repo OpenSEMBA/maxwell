@@ -46,13 +46,13 @@ for (int d = X; d <= Z; d++) {
 setInitialField();
 
 for (int i = 0; i < probes_.getExporterProbes().size(); i++) {
-	if (probes_.getExporterProbes().at(i).type == ExporterProbe::Type::Paraview) {
+	if (probes_.getExporterProbes().at(i)->type == ExporterProbe::Type::Paraview) {
 		initializeParaviewData();
 		break;
 	}
 }
 for (int i = 0; i < probes_.getExporterProbes().size(); i++) {
-	if (probes_.getExporterProbes().at(i).type == ExporterProbe::Type::Glvis) {
+	if (probes_.getExporterProbes().at(i)->type == ExporterProbe::Type::Glvis) {
 		//initializeGLVISData();
 		break;
 	}
@@ -62,7 +62,7 @@ if (probes_.getPointsProbes().size()) {
 	for (int i = 0; i < probes_.getPointsProbes().size(); i++) {
 		elemIds_.resize(probes_.getPointsProbes().size());
 		integPointSet_.resize(probes_.getPointsProbes().size());
-		auto elemAndIntPointPair = buildElemAndIntegrationPointArrays(probes_.getPointsProbes().at(i).getIntegPointMat());
+		auto elemAndIntPointPair = buildElemAndIntegrationPointArrays(probes_.getPointsProbes().at(i)->getIntegPointMat());
 		elemIds_.at(i) = elemAndIntPointPair.first;
 		integPointSet_.at(i) = buildIntegrationPointsSet(elemAndIntPointPair.second);
 	}
@@ -133,7 +133,10 @@ const GridFunction& Solver::getFieldInDirection(const FieldType& ft, const Direc
 		return E_[d];
 	case FieldType::H:
 		return H_[d];
+	default:
+		throw std::runtime_error("Invalid field type.");
 	}
+	
 }
 
 const std::pair<Array<int>, Array<IntegrationPoint>> Solver::buildElemAndIntegrationPointArrays(DenseMatrix& physPoints) const
@@ -181,14 +184,14 @@ const std::vector<std::vector<std::array<double, 3>>> Solver::saveFieldAtPointsF
 		for (int j = 0; j < elemIds_.at(i).Size(); j++) {
 			for (int dir = Direction::X; dir != maxDir; dir++) {
 				Direction d = static_cast<Direction>(dir);
-				switch (probes_.getPointsProbes().at(i).getFieldType()) {
+				switch (probes_.getPointsProbes().at(i)->getFieldType()) {
 				case FieldType::E:
-					aux[j][probes_.getPointsProbes().at(i).getDirection()] =
-						E_[probes_.getPointsProbes().at(i).getDirection()].GetValue(elemIds_.at(i)[j], integPointSet_.at(i).at(j)[d]);
+					aux[j][probes_.getPointsProbes().at(i)->getDirection()] =
+						E_[probes_.getPointsProbes().at(i)->getDirection()].GetValue(elemIds_.at(i)[j], integPointSet_.at(i).at(j)[d]);
 					break;
 				case FieldType::H:
-					aux[j][probes_.getPointsProbes().at(i).getDirection()] =
-						H_[probes_.getPointsProbes().at(i).getDirection()].GetValue(elemIds_.at(i)[j], integPointSet_.at(i).at(j)[d]);
+					aux[j][probes_.getPointsProbes().at(i)->getDirection()] =
+						H_[probes_.getPointsProbes().at(i)->getDirection()].GetValue(elemIds_.at(i)[j], integPointSet_.at(i).at(j)[d]);
 					break;
 				}
 			}
@@ -229,7 +232,7 @@ void Solver::initializeParaviewData()
 void Solver::storeInitialVisualizationValues()
 {
 	for (int i = 0; i < probes_.getExporterProbes().size(); i++) {
-		if (probes_.getExporterProbes().at(i).type == ExporterProbe::Type::Paraview) {
+		if (probes_.getExporterProbes().at(i)->type == ExporterProbe::Type::Paraview) {
 			pd_->SetCycle(0);
 			pd_->SetTime(0.0);
 			pd_->Save();
@@ -267,7 +270,7 @@ void Solver::run()
 		timeRecord_ = time;
 		fieldRecord_ = saveFieldAtPointsForAllProbes();
 		for (int i = 0; i < probes_.getPointsProbes().size(); i++) {
-			probes_.getPointsProbes().at(i).getFieldMovie().emplace(timeRecord_, fieldRecord_.at(i));
+			probes_.getPointsProbes().at(i)->getFieldMovie().emplace(timeRecord_, fieldRecord_.at(i));
 		}
 	}
 
@@ -286,11 +289,11 @@ void Solver::run()
 				fieldRecord_ = saveFieldAtPointsForAllProbes();
 				for (int i = 0; i < probes_.getPointsProbes().size(); i++) {
 					timeRecord_ = time;
-					probes_.getPointsProbes().at(i).getFieldMovie().emplace(timeRecord_, fieldRecord_.at(i));
+					probes_.getPointsProbes().at(i)->getFieldMovie().emplace(timeRecord_, fieldRecord_.at(i));
 				}
 			}
 			for (int i = 0; i < probes_.getExporterProbes().size(); i++) {
-				if (probes_.getExporterProbes().at(i).type == ExporterProbe::Type::Paraview) {
+				if (probes_.getExporterProbes().at(i)->type == ExporterProbe::Type::Paraview) {
 				pd_->SetCycle(cycle);
 				pd_->SetTime(time);
 				pd_->Save();

@@ -17,7 +17,7 @@ TEST_F(TestMaxwellProbes, integPointConvChecker_1D)
 	testMat.Elem(0, 0) = 0.0;
 	testMat.Elem(0, 1) = 0.5;
 	testMat.Elem(0, 2) = 1.0;
-	DenseMatrix probeMat = probes.getPointsProbes().at(0).getIntegPointMat();
+	DenseMatrix probeMat = probes.getPointsProbes().at(0)->getIntegPointMat();
 	
 	for (int i = 0; i < pointVec.at(0).size(); i++) {
 		for (int j = 0; j < pointVec.size(); j++) {
@@ -45,6 +45,6 @@ TEST_F(TestMaxwellProbes, integPointOneSubvector)
 	Probes probes;
 	auto pointVec = std::vector<std::vector<double>>({ {0.5} });
 	probes.addProbeToCollection(PointsProbe(E, X, pointVec));
-	EXPECT_EQ(1, probes.getPointsProbes().at(0).getIntegPointMat().Size());
-	EXPECT_EQ(0.5, probes.getPointsProbes().at(0).getIntegPointMat().Elem(0, 0));
+	EXPECT_EQ(1, probes.getPointsProbes().at(0)->getIntegPointMat().Size());
+	EXPECT_EQ(0.5, probes.getPointsProbes().at(0)->getIntegPointMat().Elem(0, 0));
 }

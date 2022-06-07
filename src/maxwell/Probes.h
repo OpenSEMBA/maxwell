@@ -8,7 +8,9 @@
 namespace maxwell {
 
 class Probe {
-
+public:
+    virtual ~Probe() = default;
+    
 };
 
 class ExporterProbe : public Probe {
@@ -32,7 +34,6 @@ public:
     DenseMatrix& getIntegPointMat() { return integPointMat_; }
     FieldMovie& getFieldMovie() { return fieldMovie_; }
     const FieldMovie& getConstFieldMovie() const { return fieldMovie_; }
-    
 private:
 
     FieldType fieldToExtract_;
@@ -52,10 +53,10 @@ public:
     int vis_steps = 1;
     bool extractDataAtPoints = false;
 
-    void addProbeToCollection(const Probe& probe) { probes_.insert(probe); }
+    void addProbeToCollection(Probe& probe);
     
-    std::vector<PointsProbe&> getPointsProbes();
-    std::vector<ExporterProbe&> getExporterProbes();
+    std::vector<PointsProbe*> getPointsProbes();
+    std::vector<ExporterProbe*> getExporterProbes();
 
 private:
     boost::base_collection<Probe> probes_;
