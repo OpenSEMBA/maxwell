@@ -32,8 +32,8 @@ const void PointsProbe::verifyEntrySubvectorsNotEmpty(std::vector<std::vector<do
 
 const void PointsProbe::buildIntegPointMat(std::vector<std::vector<double>>& points)
 {
-	integPointMat_.SetSize((int) points.at(0).size(),(int) points.size());
-	if ((int) points.at(0).size() == 1 && (int) points.size() == 1) {
+	integPointMat_.SetSize((int) points.at(0).size(), (int) points.size());
+	if (points.at(0).size() == 1 && points.size() == 1) {
 		integPointMat_.Elem(0, 0) = points.at(0).at(0);
 	}
 	else {
@@ -65,4 +65,28 @@ PointsProbe::PointsProbe(const FieldType& ft, const Direction& d, std::vector<st
 	}
 }
 
+void Probes::addProbeToCollection(Probe& probe)
+{
+	probes_.insert(probe);
+}
+
+std::vector<PointsProbe*> Probes::getPointsProbes()
+{
+	std::vector<PointsProbe*> res;
+	res.reserve(probes_.size<PointsProbe>());
+	for (auto& p : probes_.segment(PointsProbe)) {
+		res.push_back(p);
+	}
+	return res;
+}
+
+std::vector<ExporterProbe*> Probes::getExporterProbes()
+{
+	std::vector<ExporterProbe*> res;
+	//res.reserve(probes_.size<ExporterProbe>());
+	//for (auto& p : probes_.segment<ExporterProbe>()) {
+	//	res.push_back(&p);
+	//}
+	return res;
+}
 }
